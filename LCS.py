@@ -13,6 +13,7 @@ class MatrixNode:
 class LCS:
 
     def __init__(self, first_string, second_string):
+
         def determine_longer_string():
             """Decide which string should be considered the first string regardless of entry"""
             if len(first_string) < len(second_string):
@@ -25,7 +26,8 @@ class LCS:
         determine_longer_string()
         self.first_length = len(self.first_string)+1
         self.second_length = len(self.second_string)+1
-        self.solution_matrix = [[0 for x in range(self.second_length)] for x in range(self.first_length)]
+        null_node = MatrixNode("no where", 0)
+        self.solution_matrix = [[null_node for _ in range(self.second_length)] for _ in range(self.first_length)]
 
     def lcs(self):
         """Calculate the length of an LCS"""
@@ -126,6 +128,14 @@ class TestClass(unittest.TestCase):
         lcs = LCS(string_x, string_y)
         lcs.lcs()
         self.assertEqual("CTCGTA", lcs.read_solution())
+
+    def test_alternate_lcs_from_homework(self):
+        string_x = "AACGTCGTG"
+        string_y = "TCTTCTG"
+        lcs = LCS(string_x, string_y)
+        lcs.lcs()
+        self.assertEqual("CTCTG", lcs.read_solution())
+
 
 def main():
     unittest.main()
