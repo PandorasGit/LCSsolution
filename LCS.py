@@ -34,29 +34,30 @@ class LCS:
 
         def lcs_recursive(index_of_first_string, index_of_second_string):
             """Recursive call to loop calculate length"""
+            def assign_to_matrix(direction, size, letter=None):
+                """Assigns a node to a place in the matrix"""
+                matrix_node = MatrixNode(direction, size, letter)
+                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
+                return matrix_node
+
             if index_of_first_string == 0 or index_of_second_string == 0:
                 return 0
 
             if self.first_string[index_of_first_string - 1] == self.second_string[index_of_second_string - 1]:
-
-                matrix_node = MatrixNode("up right",
-                                         lcs_recursive(index_of_first_string - 1, index_of_second_string - 1) + 1,
-                                         self.first_string[index_of_first_string - 1])
-
-                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
-                return matrix_node.length
+                length = lcs_recursive(index_of_first_string - 1, index_of_second_string - 1) + 1
+                assign_to_matrix("up left", length, self.first_string[index_of_first_string - 1])
+                return length
 
             length_lcs_with_index_of_second_decreased = lcs_recursive(index_of_first_string, index_of_second_string - 1)
             length_lcs_with_index_of_first_decreased = lcs_recursive(index_of_first_string-1, index_of_second_string)
 
             if length_lcs_with_index_of_first_decreased >= length_lcs_with_index_of_second_decreased:
-                matrix_node = MatrixNode("left", length_lcs_with_index_of_first_decreased)
-                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
-                return matrix_node.length
+                new_matrix_node = assign_to_matrix("left", length_lcs_with_index_of_first_decreased)
+                return new_matrix_node.length
+
             else:
-                matrix_node = MatrixNode("up", length_lcs_with_index_of_second_decreased)
-                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
-                return matrix_node.length
+                new_matrix_node = assign_to_matrix("up", length_lcs_with_index_of_second_decreased)
+                return new_matrix_node.length
 
         return lcs_recursive(self.first_length-1, self.second_length-1)
 
@@ -76,7 +77,7 @@ class LCS:
         while True:
             if index_first == 0 or index_second == 0:
                 return reverse_string(solution)
-            if self.solution_matrix[index_first][index_second].direction is "up right":
+            if self.solution_matrix[index_first][index_second].direction is "up left":
                 solution += self.solution_matrix[index_first][index_second].letter
                 index_first -= 1
                 index_second -= 1
