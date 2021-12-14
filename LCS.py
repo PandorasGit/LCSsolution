@@ -60,21 +60,28 @@ class LCS:
 
     def read_solution(self):
         """Uses Matrix to calculate a LCS, not the only one tho"""
+        def reverse_string(string_to_be_reversed):
+            """Reverse a string"""
+            new_string = ""
+            for s in range(len(string_to_be_reversed)):
+                new_string += string_to_be_reversed[len(string_to_be_reversed)-s-1]
+            return new_string
+
         index_first = self.first_length-1
         index_second = self.second_length-1
         solution = ""
 
         while True:
             if index_first == 0 or index_second == 0:
-                return solution
+                return reverse_string(solution)
             if self.solution_matrix[index_first][index_second].direction is "up right":
                 solution += self.solution_matrix[index_first][index_second].letter
                 index_first -= 1
                 index_second -= 1
             elif self.solution_matrix[index_first][index_second].direction is "up":
-                index_first -= 1
-            else:
                 index_second -= 1
+            else:
+                index_first -= 1
 
 
 class TestClass(unittest.TestCase):
@@ -106,14 +113,19 @@ class TestClass(unittest.TestCase):
         lcs = LCS(string_x, string_y)
         self.assertEqual(3, lcs.lcs())
 
-
     def test_lcs_of_string_ab_and_ba(self):
         string_x = "ab"
         string_y = "ba"
         lcs = LCS(string_x, string_y)
         lcs.lcs()
-        self.assertEqual("a", lcs.read_solution())
+        self.assertEqual("b", lcs.read_solution())
 
+    def test_lcs_from_homework(self):
+        string_x = "AACGTCGTGA"
+        string_y = "TCTTCTGGCTAA"
+        lcs = LCS(string_x, string_y)
+        lcs.lcs()
+        self.assertEqual("CTCGTA", lcs.read_solution())
 
 def main():
     unittest.main()
