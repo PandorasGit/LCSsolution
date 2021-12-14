@@ -36,7 +36,7 @@ class LCS:
                 matrix_node = MatrixNode("up right",
                                          lcs_recursive(index_of_first_string - 1, index_of_second_string - 1) + 1,
                                          self.first_string[index_of_first_string - 1])
-                self.solution_matrix[index_of_first_string-1][index_of_second_string-1] = matrix_node
+                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
                 return matrix_node.length
             return max(
                 lcs_recursive(index_of_first_string, index_of_second_string - 1),
@@ -74,6 +74,7 @@ class TestClass(unittest.TestCase):
         string_y = "slizudjfg"
         lcs = LCS(string_x, string_y)
         self.assertEqual(3, lcs.lcs())
+
 
 
 
