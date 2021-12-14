@@ -23,7 +23,9 @@ class LCS:
                 self.second_string = first_string
 
         determine_longer_string()
-        self.solution_matrix = [[0 for x in range(len(self.second_string)+1)] for x in range(len(self.first_string)+1)]
+        self.first_length = len(self.first_string)+1
+        self.second_length = len(self.second_string)+1
+        self.solution_matrix = [[0 for x in range(self.second_length)] for x in range(self.first_length)]
 
     def lcs(self):
         """Calculate the length of an LCS"""
@@ -32,18 +34,47 @@ class LCS:
             """Recursive call to loop calculate length"""
             if index_of_first_string == 0 or index_of_second_string == 0:
                 return 0
+
             if self.first_string[index_of_first_string - 1] == self.second_string[index_of_second_string - 1]:
+
                 matrix_node = MatrixNode("up right",
                                          lcs_recursive(index_of_first_string - 1, index_of_second_string - 1) + 1,
                                          self.first_string[index_of_first_string - 1])
+
                 self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
                 return matrix_node.length
-            return max(
-                lcs_recursive(index_of_first_string, index_of_second_string - 1),
-                lcs_recursive(index_of_first_string - 1, index_of_second_string)
-            )
 
-        return lcs_recursive(len(self.first_string), len(self.second_string))
+            length_lcs_with_index_of_second_decreased = lcs_recursive(index_of_first_string, index_of_second_string - 1)
+            length_lcs_with_index_of_first_decreased = lcs_recursive(index_of_first_string-1, index_of_second_string)
+
+            if length_lcs_with_index_of_first_decreased >= length_lcs_with_index_of_second_decreased:
+                matrix_node = MatrixNode("left", length_lcs_with_index_of_first_decreased)
+                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
+                return matrix_node.length
+            else:
+                matrix_node = MatrixNode("up", length_lcs_with_index_of_second_decreased)
+                self.solution_matrix[index_of_first_string][index_of_second_string] = matrix_node
+                return matrix_node.length
+
+        return lcs_recursive(self.first_length-1, self.second_length-1)
+
+    def read_solution(self):
+        """Uses Matrix to calculate a LCS, not the only one tho"""
+        index_first = self.first_length-1
+        index_second = self.second_length-1
+        solution = ""
+
+        while True:
+            if index_first == 0 or index_second == 0:
+                return solution
+            if self.solution_matrix[index_first][index_second].direction is "up right":
+                solution += self.solution_matrix[index_first][index_second].letter
+                index_first -= 1
+                index_second -= 1
+            elif self.solution_matrix[index_first][index_second].direction is "up":
+                index_first -= 1
+            else:
+                index_second -= 1
 
 
 class TestClass(unittest.TestCase):
@@ -76,6 +107,12 @@ class TestClass(unittest.TestCase):
         self.assertEqual(3, lcs.lcs())
 
 
+    def test_lcs_of_string_ab_and_ba(self):
+        string_x = "ab"
+        string_y = "ba"
+        lcs = LCS(string_x, string_y)
+        lcs.lcs()
+        self.assertEqual("a", lcs.read_solution())
 
 
 def main():
